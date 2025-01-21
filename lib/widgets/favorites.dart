@@ -19,10 +19,10 @@ class Favorites extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                FutureBuilder<Account>(
+                FutureBuilder<Account?>(
                     future: Provider.of<AccountsModel>(context, listen: false)
                         .favoriteDebitAccount,
-                    builder: (context, AsyncSnapshot<Account> snapshot) {
+                    builder: (context, AsyncSnapshot<Account?> snapshot) {
                       return DropdownButton<Account>(
                         hint: Text("Favorite Debit Account"),
                         isExpanded: true,
@@ -31,7 +31,7 @@ class Favorites extends StatelessWidget {
                           return DropdownMenuItem(
                             value: account,
                             child: Text(
-                              account.fullName,
+                              account.fullName!,
                               overflow: TextOverflow.ellipsis,
                             ),
                           );
@@ -42,14 +42,14 @@ class Favorites extends StatelessWidget {
                         value: snapshot.hasData
                             ? accounts.validTransactionAccounts.firstWhere(
                                 (account) =>
-                                    account.fullName == snapshot.data.fullName)
+                                    account.fullName == snapshot.data!.fullName)
                             : null,
                       );
                     }),
-                FutureBuilder<Account>(
+                FutureBuilder<Account?>(
                     future: Provider.of<AccountsModel>(context, listen: false)
                         .favoriteCreditAccount,
-                    builder: (context, AsyncSnapshot<Account> snapshot) {
+                    builder: (context, AsyncSnapshot<Account?> snapshot) {
                       return DropdownButton<Account>(
                         hint: Text("Favorite Credit Account"),
                         isExpanded: true,
@@ -58,7 +58,7 @@ class Favorites extends StatelessWidget {
                           return DropdownMenuItem(
                             value: account,
                             child: Text(
-                              account.fullName,
+                              account.fullName!,
                               overflow: TextOverflow.ellipsis,
                             ),
                           );
@@ -69,7 +69,7 @@ class Favorites extends StatelessWidget {
                         value: snapshot.hasData
                             ? accounts.validTransactionAccounts.firstWhere(
                                 (account) =>
-                                    account.fullName == snapshot.data.fullName)
+                                    account.fullName == snapshot.data!.fullName)
                             : null,
                       );
                     }),
@@ -80,7 +80,7 @@ class Favorites extends StatelessWidget {
                 TextButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(Constants.darkAccent),
+                        WidgetStateProperty.all<Color>(Constants.darkAccent),
                   ),
                   onPressed: () {
                     accounts.removeFavoriteDebitAccount();
@@ -95,7 +95,7 @@ class Favorites extends StatelessWidget {
                 TextButton(
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(Constants.darkAccent),
+                        WidgetStateProperty.all<Color>(Constants.darkAccent),
                   ),
                   onPressed: () {
                     accounts.removeFavoriteCreditAccount();

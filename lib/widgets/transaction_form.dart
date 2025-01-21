@@ -1,5 +1,6 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:gnucash_mobile/providers/accounts.dart';
 import 'package:gnucash_mobile/providers/transactions.dart';
 import 'package:intl/intl.dart';
@@ -8,9 +9,9 @@ import 'package:provider/provider.dart';
 import '../constants.dart';
 
 class TransactionForm extends StatefulWidget {
-  final Account toAccount;
+  final Account? toAccount;
 
-  TransactionForm({Key key, this.toAccount}) : super(key: key);
+  TransactionForm({Key? key, this.toAccount}) : super(key: key);
   @override
   _TransactionFormState createState() => _TransactionFormState();
 }
@@ -69,15 +70,15 @@ class _TransactionFormState extends State<TransactionForm> {
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   onEditingComplete: () => _node.nextFocus(),
                   onSaved: (value) {
-                    final _amount = _simpleCurrencyNumberFormat.parse(value);
-                    _transactions[0].amount = _amount;
+                    final _amount = _simpleCurrencyNumberFormat.parse(value!);
+                    _transactions[0].amount = _amount as double?;
                     _transactions[0].amountWithSymbol = value;
-                    _transactions[1].amount = -_amount;
+                    _transactions[1].amount = -_amount as double?;
                     _transactions[1].amountWithSymbol = "-" + value;
                   },
                   textInputAction: TextInputAction.next,
                   validator: (value) {
-                    if (value.isEmpty) {
+                    if (value!.isEmpty) {
                       return 'Please enter a valid amount';
                     }
 
@@ -108,16 +109,16 @@ class _TransactionFormState extends State<TransactionForm> {
                 textCapitalization: TextCapitalization.sentences,
                 textInputAction: TextInputAction.next,
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value!.isEmpty) {
                     return 'Please enter a valid description';
                   }
                   return null;
                 },
               ),
-              FutureBuilder<Account>(
+              FutureBuilder<Account?>(
                   future: Provider.of<AccountsModel>(context, listen: false)
                       .favoriteCreditAccount,
-                  builder: (context, AsyncSnapshot<Account> snapshot) {
+                  builder: (context, AsyncSnapshot<Account?> snapshot) {
                     return DropdownButtonFormField<Account>(
                         decoration: const InputDecoration(
                           hintText: 'Credit Account',
@@ -128,14 +129,14 @@ class _TransactionFormState extends State<TransactionForm> {
                           return DropdownMenuItem(
                             value: account,
                             child: Text(
-                              account.fullName,
+                              account.fullName!,
                               overflow: TextOverflow.ellipsis,
                             ),
                           );
                         }).toList(),
                         onChanged: (value) {},
                         onSaved: (value) {
-                          _transactions[0].fullAccountName = value.fullName;
+                          _transactions[0].fullAccountName = value!.fullName;
                           _transactions[0].accountName = value.name;
                         },
                         validator: (value) {
@@ -147,18 +148,18 @@ class _TransactionFormState extends State<TransactionForm> {
                         value: snapshot.hasData
                             ? accounts.validTransactionAccounts.firstWhere(
                                 (account) =>
-                                    account.fullName == snapshot.data.fullName)
+                                    account.fullName == snapshot.data!.fullName)
                             : widget.toAccount != null
                                 ? accounts.validTransactionAccounts.firstWhere(
                                     (account) =>
                                         account.fullName ==
-                                        widget.toAccount.fullName)
+                                        widget.toAccount!.fullName)
                                 : null);
                   }),
-              FutureBuilder<Account>(
+              FutureBuilder<Account?>(
                   future: Provider.of<AccountsModel>(context, listen: false)
                       .favoriteDebitAccount,
-                  builder: (context, AsyncSnapshot<Account> snapshot) {
+                  builder: (context, AsyncSnapshot<Account?> snapshot) {
                     return DropdownButtonFormField<Account>(
                       decoration: const InputDecoration(
                         hintText: 'Debit Account',
@@ -168,12 +169,12 @@ class _TransactionFormState extends State<TransactionForm> {
                       items: accounts.validTransactionAccounts.map((account) {
                         return DropdownMenuItem(
                           value: account,
-                          child: Text(account.fullName),
+                          child: Text(account.fullName!),
                         );
                       }).toList(),
                       onChanged: (value) {},
                       onSaved: (value) {
-                        _transactions[1].fullAccountName = value.fullName;
+                        _transactions[1].fullAccountName = value!.fullName;
                         _transactions[1].accountName = value.name;
                       },
                       validator: (value) {
@@ -185,7 +186,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       value: snapshot.hasData
                           ? accounts.validTransactionAccounts.firstWhere(
                               (account) =>
-                                  account.fullName == snapshot.data.fullName)
+                                  account.fullName == snapshot.data!.fullName)
                           : null,
                     );
                   }),
@@ -196,21 +197,21 @@ class _TransactionFormState extends State<TransactionForm> {
                 controller: _dateInputController,
                 onSaved: (value) {
                   _transactions[0].date = DateFormat('yyyy-MM-dd')
-                      .format(DateFormat.yMd().parse(value));
+                      .format(DateFormat.yMd().parse(value!));
                 },
                 onTap: () async {
                   final _now = DateTime.now();
-                  final _date = await showDatePicker(
+                  final _date = await (showDatePicker(
                     context: context,
                     initialDate: _now,
                     firstDate: DateTime(_now.year - 10),
                     lastDate: DateTime(_now.year + 10),
-                  );
+                  ) as FutureOr<DateTime>);
 
                   _dateInputController.text = DateFormat.yMd().format(_date);
                 },
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value!.isEmpty) {
                     return 'Please enter a valid date';
                   }
                   try {
@@ -243,9 +244,9 @@ class _TransactionFormState extends State<TransactionForm> {
           onPressed: () {
             // Validate will return true if the form is valid, or false if
             // the form is invalid.
-            if (_key.currentState.validate()) {
+            if (_key.currentState!.validate()) {
               // Process data.
-              _key.currentState.save();
+              _key.currentState!.save();
 
               final id = UniqueKey().toString();
               _transactions[0].id = id;

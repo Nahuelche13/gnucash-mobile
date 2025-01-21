@@ -17,10 +17,10 @@ class Export extends StatefulWidget {
 }
 
 class _ExportState extends State<Export> {
-  String _directoryPath;
-  String _directory;
+  String? _directoryPath;
+  String? _directory;
 
-  bool deleteTransactionsOnExport = false;
+  bool? deleteTransactionsOnExport = false;
 
   @override
   void initState() {
@@ -53,12 +53,12 @@ class _ExportState extends State<Export> {
         child: FutureBuilder(
             future: Provider.of<TransactionsModel>(context, listen: false)
                 .readTransactionsCsv(),
-            builder: (context, AsyncSnapshot<String> snapshot) {
+            builder: (context, AsyncSnapshot<String?> snapshot) {
               String _text;
               if (snapshot.hasData) {
                 // Remove 1 for header row, divide by 2 for double entry
                 final _numTransactions =
-                    ("\n".allMatches(snapshot.data).length - 1) / 2;
+                    ("\n".allMatches(snapshot.data!).length - 1) / 2;
                 _text = "${_numTransactions.toInt()} transaction(s)";
               } else {
                 _text = "0 transactions";
@@ -79,7 +79,7 @@ class _ExportState extends State<Export> {
                       ? SizedBox.shrink()
                       : TextButton(
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
+                            backgroundColor: WidgetStateProperty.all<Color>(
                                 Constants.darkAccent),
                           ),
                           onPressed: () => _selectFolder(),
@@ -103,7 +103,7 @@ class _ExportState extends State<Export> {
                   ),
                   TextButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
+                      backgroundColor: WidgetStateProperty.all<Color>(
                           Constants.darkAccent),
                     ),
                     onPressed: () async {
@@ -124,9 +124,9 @@ class _ExportState extends State<Export> {
                       try {
                         final _fileName =
                             "$_directoryPath/${_yearMonthDay}_${DateTime.now().millisecond}.gnucash_transactions.csv";
-                        await File(_fileName).writeAsString(snapshot.data);
+                        await File(_fileName).writeAsString(snapshot.data!);
 
-                        if (deleteTransactionsOnExport) {
+                        if (deleteTransactionsOnExport!) {
                           Provider.of<TransactionsModel>(context, listen: false)
                               .removeAll();
                         }

@@ -48,9 +48,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -65,15 +65,15 @@ class _MyHomePageState extends State<MyHomePage> {
       return FutureBuilder<List<Account>>(
           future: Provider.of<AccountsModel>(context, listen: false).accounts,
           builder: (context, AsyncSnapshot<List<Account>> snapshot) {
-            final accounts = snapshot.hasData ? snapshot.data : [];
+            final accounts = snapshot.hasData ? snapshot.data! : [];
             final _hasImported = accounts.length > 0;
 
             return Scaffold(
               appBar: AppBar(
                 backgroundColor: Constants.darkBG,
-                title: Text(widget.title),
+                title: Text(widget.title!),
               ),
-              body: _hasImported ? ListOfAccounts(accounts: accounts) : Intro(),
+              body: _hasImported ? ListOfAccounts(accounts: accounts as List<Account>) : Intro(),
               drawer: Drawer(
                   child: ListView(
                 padding: EdgeInsets.zero,
@@ -102,12 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           return;
                         }
 
-                        FilePickerResult result =
+                        FilePickerResult? result =
                             await FilePicker.platform.pickFiles();
 
                         if (result != null) {
                           try {
-                            final _file = File(result.files.single.path);
+                            final _file = File(result.files.single.path!);
                             String contents = await _file.readAsString();
                             Provider.of<AccountsModel>(context, listen: false)
                                 .addAll(contents);
@@ -165,13 +165,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         Provider.of<TransactionsModel>(context, listen: true)
                             .transactions,
                     builder:
-                        (context, AsyncSnapshot<List<Transaction>> snapshot) {
+                        (context, AsyncSnapshot<List<Transaction>?> snapshot) {
                       return ListTile(
                           title: Text(
-                              'Delete ${snapshot.hasData ? snapshot.data.length ~/ 2 : 0} Transaction(s)'),
+                              'Delete ${snapshot.hasData ? snapshot.data!.length ~/ 2 : 0} Transaction(s)'),
                           onTap: () {
                             if (!snapshot.hasData ||
-                                snapshot.data.length == 0) {
+                                snapshot.data!.length == 0) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(

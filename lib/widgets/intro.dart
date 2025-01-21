@@ -13,14 +13,14 @@ class Intro extends StatelessWidget {
       child: TextButton(
         style: ButtonStyle(
           backgroundColor:
-              MaterialStateProperty.all<Color>(Constants.darkAccent),
+              WidgetStateProperty.all<Color>(Constants.darkAccent),
         ),
         onPressed: () async {
-          FilePickerResult result = await FilePicker.platform.pickFiles();
+          FilePickerResult? result = await FilePicker.platform.pickFiles();
 
           if (result != null) {
             try {
-              final _file = File(result.files.single.path);
+              final _file = File(result.files.single.path!);
               String contents = await _file.readAsString();
               Provider.of<AccountsModel>(context, listen: false)
                   .addAll(contents);

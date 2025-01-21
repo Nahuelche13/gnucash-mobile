@@ -7,22 +7,22 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Transaction {
-  String date;
-  String id;
-  int number;
-  String description;
-  String notes;
-  String commodityCurrency;
-  String voidReason;
-  String action;
-  String memo;
-  String fullAccountName;
-  String accountName;
-  String amountWithSymbol;
-  double amount;
-  String reconcile = "n";
-  String reconcileDate;
-  int ratePrice;
+  String? date;
+  String? id;
+  int? number;
+  String? description;
+  String? notes;
+  String? commodityCurrency;
+  String? voidReason;
+  String? action;
+  String? memo;
+  String? fullAccountName;
+  String? accountName;
+  String? amountWithSymbol;
+  double? amount;
+  String? reconcile = "n";
+  String? reconcileDate;
+  int? ratePrice;
 
   Transaction();
 
@@ -86,7 +86,7 @@ class TransactionsModel extends ChangeNotifier {
     return File('$path/transactions.csv');
   }
 
-  Future<String> readTransactionsCsv() async {
+  Future<String?> readTransactionsCsv() async {
     try {
       final _file = await _localFile;
       final _string = await _file.readAsString();
@@ -98,14 +98,14 @@ class TransactionsModel extends ChangeNotifier {
     }
   }
 
-  Map<String, List<Transaction>> _transactionsByAccountFullName = Map();
+  Map<String?, List<Transaction>> _transactionsByAccountFullName = Map();
 
-  UnmodifiableMapView<String, List<Transaction>>
+  UnmodifiableMapView<String?, List<Transaction>>
       get transactionsByAccountFullName {
     return UnmodifiableMapView(_transactionsByAccountFullName);
   }
 
-  Future<UnmodifiableListView<Transaction>> get transactions async {
+  Future<UnmodifiableListView<Transaction>?> get transactions async {
     try {
       final file = await _localFile;
       String contents = await file.readAsString();
@@ -123,7 +123,7 @@ class TransactionsModel extends ChangeNotifier {
       final _parsed = _converter.convert(contents.trim());
 
       final _transactions = <Transaction>[];
-      final Map<String, List<Transaction>> _transactionsByAccountFullName =
+      final Map<String?, List<Transaction>> _transactionsByAccountFullName =
           Map();
       for (var line in _parsed) {
         final _transaction = Transaction.fromList(line);
@@ -132,7 +132,7 @@ class TransactionsModel extends ChangeNotifier {
         // Add to representation of balances
         if (_transactionsByAccountFullName
             .containsKey(_transaction.fullAccountName)) {
-          _transactionsByAccountFullName[_transaction.fullAccountName]
+          _transactionsByAccountFullName[_transaction.fullAccountName]!
               .add(_transaction);
         } else {
           _transactionsByAccountFullName[_transaction.fullAccountName] = [
@@ -170,7 +170,7 @@ class TransactionsModel extends ChangeNotifier {
     for (var _transaction in transactions) {
       if (_transactionsByAccountFullName
           .containsKey(_transaction.fullAccountName)) {
-        _transactionsByAccountFullName[_transaction.fullAccountName]
+        _transactionsByAccountFullName[_transaction.fullAccountName]!
             .add(_transaction);
       } else {
         _transactionsByAccountFullName[_transaction.fullAccountName] = [
@@ -203,7 +203,7 @@ class TransactionsModel extends ChangeNotifier {
 
       final toRemove = [];
       for (var line in lines) {
-        if (line.contains(transaction.id)) {
+        if (line.contains(transaction.id!)) {
           toRemove.add(line);
         }
       }

@@ -12,7 +12,7 @@ import 'account_view.dart';
 class ListOfAccounts extends StatelessWidget {
   final List<Account> accounts;
 
-  ListOfAccounts({Key key, @required this.accounts}) : super(key: key);
+  ListOfAccounts({Key? key, required this.accounts}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,33 +22,26 @@ class ListOfAccounts extends StatelessWidget {
     return Container(
       child: Consumer<TransactionsModel>(
           builder: (context, transactionsModel, child) {
-        return ListView.builder(
+        return ListView.separated(
+          itemCount: this.accounts.length,
+          separatorBuilder: (context, index) => Divider(),
           itemBuilder: (context, index) {
-            if (index.isOdd) {
-              return Divider();
-            }
-
-            final int i = index ~/ 2;
-            if (i >= this.accounts.length) {
-              return null;
-            }
-
-            final _account = this.accounts[i];
+            final _account = this.accounts[index];
             final List<Transaction> _transactions = [];
             for (var key
                 in transactionsModel.transactionsByAccountFullName.keys) {
-              if (key.startsWith(_account.fullName)) {
+              if (key!.startsWith(_account.fullName!)) {
                 _transactions.addAll(
-                    transactionsModel.transactionsByAccountFullName[key]);
+                    transactionsModel.transactionsByAccountFullName[key]!);
               }
             }
             final double _balance = _transactions.fold(0.0,
-                (previousValue, element) => previousValue + element.amount);
+                (previousValue, element) => previousValue + element.amount!);
             final _simpleCurrencyValue = _simpleCurrencyNumberFormat.format(_balance);
 
             return ListTile(
               title: Text(
-                _account.name,
+                _account.name!,
                 style: Constants.biggerFont,
               ),
               trailing: Text(
@@ -62,7 +55,7 @@ class ListOfAccounts extends StatelessWidget {
                       return Scaffold(
                         appBar: AppBar(
                           backgroundColor: Constants.darkBG,
-                          title: Text(_account.fullName),
+                          title: Text(_account.fullName!),
                         ),
                         body: TransactionsView(
                             transactions: Provider.of<TransactionsModel>(

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class TransactionsView extends StatelessWidget {
   final List<Transaction> transactions;
 
-  TransactionsView({Key key, @required this.transactions}) : super(key: key);
+  TransactionsView({Key? key, required this.transactions}) : super(key: key);
 
 
   @override
@@ -15,23 +15,16 @@ class TransactionsView extends StatelessWidget {
         locale: Localizations.localeOf(context).toString());
 
     return Consumer<TransactionsModel>(builder: (context, transactions, child) {
-      final _transactionsBuilder = ListView.builder(
+      final _transactionsBuilder = ListView.separated(
+        itemCount: this.transactions.length,
+        separatorBuilder: (context, index) => Divider(),
         itemBuilder: (context, index) {
-          if (index.isOdd) {
-            return Divider();
-          }
-
-          final int i = index ~/ 2;
-          if (i >= this.transactions.length) {
-            return null;
-          }
-
-          final _transaction = this.transactions[i];
+          final _transaction = this.transactions[index];
           final _simpleCurrencyValue = _simpleCurrencyNumberFormat
               .format(_simpleCurrencyNumberFormat.parse(_transaction.amount.toString()));
           return Dismissible(
             background: Container(color: Colors.red),
-            key: Key(_transaction.description + _transaction.fullAccountName),
+            key: Key(_transaction.description! + _transaction.fullAccountName!),
             onDismissed: (direction) async {
               transactions.remove(_transaction);
               ScaffoldMessenger.of(context)
@@ -39,7 +32,7 @@ class TransactionsView extends StatelessWidget {
             },
             child: ListTile(
                 title: Text(
-                  _transaction.description,
+                  _transaction.description!,
                 ),
                 trailing: Text(_simpleCurrencyValue),
                 onTap: () {

@@ -11,16 +11,16 @@ import '../constants.dart';
 class AccountView extends StatelessWidget {
   final Account account;
 
-  AccountView({Key key, @required this.account}) : super(key: key);
+  AccountView({Key? key, required this.account}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Deliver simpler view if this account cannot hold transactions
-    if (this.account.placeholder) {
+    if (this.account.placeholder!) {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: Constants.darkBG,
-          title: Text(this.account.fullName),
+          title: Text(this.account.fullName!),
         ),
         body: ListOfAccounts(accounts: this.account.children),
         floatingActionButton: Builder(builder: (context) {
@@ -56,7 +56,7 @@ class AccountView extends StatelessWidget {
               Tab(icon: Icon(Icons.account_balance_sharp)),
             ],
           ),
-          title: Text(this.account.fullName),
+          title: Text(this.account.fullName!),
         ),
         body: TabBarView(
           children: [

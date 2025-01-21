@@ -10,21 +10,21 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Account {
-  double balance = 0.0; // non-standard
+  double? balance = 0.0; // non-standard
   List<Account> children = []; // non-standard
-  String code;
-  String commodityM;
-  String commodityN;
-  String color;
-  String description;
-  String fullName;
-  bool hidden;
-  String notes;
-  String parentFullName; // non-standard
-  bool placeholder; // Whether transactions can be placed in this account?
-  bool tax;
-  String type;
-  String name;
+  String? code;
+  String? commodityM;
+  String? commodityN;
+  String? color;
+  String? description;
+  String? fullName;
+  bool? hidden;
+  String? notes;
+  String? parentFullName; // non-standard
+  bool? placeholder; // Whether transactions can be placed in this account?
+  bool? tax;
+  String? type;
+  String? name;
 
   Account.fromJson(Map<String, dynamic> json) {
     this.balance = json['balance'];
@@ -111,7 +111,7 @@ class AccountsModel extends ChangeNotifier {
 
   List<Account> _validTransactionAccounts = [];
 
-  Future<Account> get favoriteDebitAccount async {
+  Future<Account?> get favoriteDebitAccount async {
     final prefs = await _prefs;
     final favoriteDebitAccountString = prefs.getString('favoriteDebitAccount');
 
@@ -122,7 +122,7 @@ class AccountsModel extends ChangeNotifier {
     }
   }
 
-  void setFavoriteDebitAccount(Account account) async {
+  void setFavoriteDebitAccount(Account? account) async {
     final prefs = await _prefs;
     await prefs.setString('favoriteDebitAccount', jsonEncode(account));
 
@@ -136,7 +136,7 @@ class AccountsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Account> get favoriteCreditAccount async {
+  Future<Account?> get favoriteCreditAccount async {
     final prefs = await _prefs;
     final favoriteCreditAccountString =
         prefs.getString('favoriteCreditAccount') ?? null;
@@ -148,7 +148,7 @@ class AccountsModel extends ChangeNotifier {
     }
   }
 
-  void setFavoriteCreditAccount(Account account) async {
+  void setFavoriteCreditAccount(Account? account) async {
     final prefs = await _prefs;
     await prefs.setString('favoriteCreditAccount', jsonEncode(account));
 
@@ -164,7 +164,7 @@ class AccountsModel extends ChangeNotifier {
 
   final List<Account> _recentCreditAccounts = [];
   final List<Account> _recentDebitAccounts = [];
-  List<Account> _accounts;
+  late List<Account> _accounts;
 
   UnmodifiableListView<Account> get validTransactionAccounts =>
       UnmodifiableListView(_validTransactionAccounts);
@@ -192,29 +192,29 @@ class AccountsModel extends ChangeNotifier {
     final _transactionAccounts = <Account>[];
     for (var line in _parsed) {
       final _account = Account.fromList(line);
-      final _lastIndex = _account.fullName.lastIndexOf(":");
+      final _lastIndex = _account.fullName!.lastIndexOf(":");
       final _hasParent = _lastIndex > 0;
       var _parentFullName = '';
       if (_hasParent) {
-        _parentFullName = _account.fullName.substring(0, _lastIndex);
+        _parentFullName = _account.fullName!.substring(0, _lastIndex);
       }
 
       _account.parentFullName = _parentFullName;
       _accounts.add(_account);
 
-      if (!_account.placeholder) {
+      if (!_account.placeholder!) {
         // This account is valid to make transactions to/from
         _transactionAccounts.add(_account);
       }
     }
     _validTransactionAccounts = _transactionAccounts;
 
-    final _lookup = Map<String, Account>();
+    final _lookup = Map<String?, Account>();
     final List<Account> _hierarchicalAccounts = [];
 
     for (var _account in _accounts) {
       if (_lookup.containsKey(_account.parentFullName)) {
-        final _parent = _lookup[_account.parentFullName];
+        final _parent = _lookup[_account.parentFullName]!;
         _parent.children.add(_account);
       } else {
         _hierarchicalAccounts.add(_account);

@@ -13,39 +13,46 @@ class Constants {
   static TextStyle biggerFont = TextStyle(fontSize: 18.0);
 
   static ThemeData lightTheme = ThemeData(
-    backgroundColor: lightBG,
     primaryColor: lightPrimary,
-    accentColor: lightAccent,
     scaffoldBackgroundColor: lightBG,
     appBarTheme: AppBarTheme(
-      elevation: 0,
-      textTheme: TextTheme(
-        headline6: TextStyle(
+      elevation: 0, toolbarTextStyle: TextTheme(
+        titleLarge: TextStyle(
           color: Colors.black,
           fontSize: 20,
           fontWeight: FontWeight.w800,
         ),
-      ),
-    ),
+      ).bodyMedium, titleTextStyle: TextTheme(
+        titleLarge: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.w800,
+        ),
+      ).titleLarge,
+    ), colorScheme: ColorScheme.fromSwatch(brightness: Brightness.light).copyWith(secondary: lightAccent, surface: lightBG),
   );
 
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    backgroundColor: darkBG,
     primaryColor: darkPrimary,
-    accentColor: darkAccent,
     scaffoldBackgroundColor: darkBG,
     appBarTheme: AppBarTheme(
       backgroundColor: darkBG,
-      elevation: 0,
-      textTheme: TextTheme(
-        headline6: TextStyle(
+      elevation: 0, toolbarTextStyle: TextTheme(
+        titleLarge: TextStyle(
           color: lightBG,
           fontSize: 20,
           fontWeight: FontWeight.w800,
         ),
-      ),
-    ),
+      ).bodyMedium,
+      titleTextStyle: TextTheme(
+        titleLarge: TextStyle(
+          color: lightBG,
+          fontSize: 20,
+          fontWeight: FontWeight.w800,
+        ),
+      ).titleLarge,
+    ), colorScheme: ColorScheme.fromSwatch(brightness: Brightness.dark).copyWith(secondary: darkAccent, surface: darkBG),
   );
 
   // static List<T> map<T>(List list, Function handler) {
